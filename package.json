@@ -1,0 +1,24 @@
+{
+  "name": "rev-dep-demo",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "dependency-cruiser": "^17.3.6",
+    "rev-dep": "^2.3.2",
+    "typescript": "^5.9.3"
+  },
+  "imports": {
+    "#demo/*.ts": {
+      "types": "./src/*.ts",
+      "node": "./dist/*.js",
+      "default": "./src/*.ts"
+    }
+  }
+}
