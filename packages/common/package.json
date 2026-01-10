@@ -1,0 +1,25 @@
+{
+  "name": "@company/common",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./file-utils": {
+      "types": "./dist/file-utils.d.ts",
+      "node": "./dist/file-utils.js",
+      "default": "./src/file-utils.ts"
+    },
+    "./async-utils": {
+      "types": "./dist/async-utils.d.ts",
+      "node": "./dist/async-utils.js",
+      "default": "./src/async-utils.ts"
+    }
+  },
+  "imports": {
+    "#common/*.ts": {
+      "types": "./src/*.ts",
+      "node": "./dist/*.js",
+      "default": "./src/*.ts"
+    }
+  }
+}

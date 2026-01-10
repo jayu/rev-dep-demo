@@ -2,3 +2,6 @@
 export * from "#demo/example-util.ts";
 // Direct relative export
 export * from "./relative-util.ts";
+
+import {getTypeParameterOwner} from "typescript"
+getTypeParameterOwner;
