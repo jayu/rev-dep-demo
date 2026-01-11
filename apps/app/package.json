@@ -5,13 +5,22 @@
   "type": "module",
   "scripts": {
     "dev": "node --loader ts-node/esm src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "files": "rev-dep files --entry-point ./src/index.ts",
+    "files-follow-monorepo": "rev-dep files --entry-point ./src/index.ts --follow-monorepo-packages",
+    "circular": "rev-dep circular",
+    "circular-follow-monorepo": "rev-dep circular --follow-monorepo-packages"
+  },
+  "imports": {
+    "#root/*.ts": "./src/*.ts"
   },
   "dependencies": {
     "@company/common": "*"
   },
   "devDependencies": {
     "typescript": "^5.9.3",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "rev-dep": "2.4.0-beta.1"
   }
 }

@@ -6,133 +6,108 @@
 npm install
 ```
 
-## Issue
-Running `rev-dep` on our index file 
-```bash
-npx rev-dep files --entry-point src/index.ts
+## TLDR
+- added support for resolving imports defined in imports map in package.json (default behaviour)
+- added support for resolving files imported from workspace packages (opt-in behaviour, use `--follow-monorepo-packages` flag)
+  - supports `exports` field, `main` field and lack of them in package.json
+
+## Cases from repo root
+
+**Run circular imports detection for whole project from project root**
+
+- `npm run circular` 
+
+Should detect circular import that exists in `packages/common`
+
+```
+Found 1 circular dependencies:
+
+Circular Dependency 1:
+ ➞ packages/common/src/file-utils.ts (cycle start)
+  ➞ packages/common/src/file.ts ('#common/file.ts')
+   ➞ packages/common/src/file-utils.ts ('./file-utils.ts')
 ```
 
-Outputs:
-```txt
+**List _app_ files with script defined in project root by providing relative path to entry point**
+
+- `npm run app-files-from-root`
+
+```
+apps/app/src/absolute.ts
+apps/app/src/index.ts
+apps/app/src/relative.ts
+packages/common/src/async-utils.ts
+packages/common/src/dir/other.js
+packages/common/src/file-utils.ts
+packages/common/src/file.ts
+packages/common/src/other2.js
+```
+
+**List _app_ files with script defined in project root by using cwd pointing to _app_**
+
+- `npm run app-files-from-root-by-cwd`
+
+```
+../../packages/common/src/async-utils.ts
+../../packages/common/src/dir/other.js
+../../packages/common/src/file-utils.ts
+../../packages/common/src/file.ts
+../../packages/common/src/other2.js
+src/absolute.ts
 src/index.ts
-src/relative-util.ts
+src/relative.ts
 ```
 
-which does not include the `example-util.ts` module which is being imported via nodejs' import map.
+## Cases from _app_ subpackage
 
-Expected output should be
-```txt
+**List files imported by entry point without following monorepo packages (just files within _app_)**
+
+- `npm run --workspace app files`
+
+```
+src/absolute.ts
 src/index.ts
-src/example-util.ts
-src/relative-util.ts
+src/relative.ts
 ```
 
+Note it follows `#root/absolute.ts` import based on package.json imports map
 
-### Dependency-cruiser
+**List files imported by entry point monorepo packages**
 
-Dependency-cruiser handles this case as expected.
+- `npm run --workspace app files-follow-monorepo` 
 
-```bash
-npx dependency-cruise --output-type json src/index.ts --no-config
+```
+../../packages/common/src/async-utils.ts
+../../packages/common/src/dir/other.js
+../../packages/common/src/file-utils.ts
+../../packages/common/src/file.ts
+../../packages/common/src/other2.js
+src/absolute.ts
+src/index.ts
+src/relative.ts
 ```
 
-Outputs:
-```json
-{
-  "modules": [
-    {
-      "source": "src/index.ts",
-      "dependencies": [
-        {
-          "module": "./relative-util.ts",
-          "moduleSystem": "es6",
-          "dynamic": false,
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
-          "resolved": "src/relative-util.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "module": "#demo/example-util.ts",
-          "moduleSystem": "es6",
-          "dynamic": false,
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-subpath-import",
-            "local",
-            "export"
-          ],
-          "resolved": "src/example-util.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        }
-      ],
-      "dependents": [],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "src/relative-util.ts",
-      "dependencies": [],
-      "dependents": [
-        "src/index.ts"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "src/example-util.ts",
-      "dependencies": [],
-      "dependents": [
-        "src/index.ts"
-      ],
-      "orphan": false,
-      "valid": true
-    }
-  ],
-  "summary": {
-    "violations": [],
-    "error": 0,
-    "warn": 0,
-    "info": 0,
-    "ignore": 0,
-    "totalCruised": 3,
-    "totalDependenciesCruised": 2,
-    "optionsUsed": {
-      "baseDir": "/Users/ryanquinn/repos/rev-dep-demo",
-      "combinedDependencies": false,
-      "detectJSDocImports": false,
-      "detectProcessBuiltinModuleCalls": false,
-      "exoticRequireStrings": [],
-      "externalModuleResolutionStrategy": "node_modules",
-      "metrics": false,
-      "moduleSystems": [
-        "es6",
-        "cjs",
-        "tsd",
-        "amd"
-      ],
-      "outputTo": "-",
-      "outputType": "json",
-      "preserveSymlinks": false,
-      "skipAnalysisNotInRules": false,
-      "tsPreCompilationDeps": false,
-      "args": "src/index.ts"
-    }
-  }
-}
+**Check circular imports in _app_**
+
+- `npm run --workspace app circular`
+
+```
+<Empty result>
 ```
 
+No circular imports exists in _app_
+
+**Check circular imports in _app_ but follow monorepo packages**
+
+- `npm run --workspace app circular-follow-monorepo`
+
+```
+Found 1 circular dependencies:
+
+Circular Dependency 1:
+ ➞ /root/rev-dep-demo/packages/common/src/file-utils.ts (cycle start)
+  ➞ /root/rev-dep-demo/packages/common/src/file.ts ('#common/file.ts')
+   ➞ /root/rev-dep-demo/packages/common/src/file-utils.ts ('./file-utils.ts')
+```
+
+It follows files, goes into `packages/common` and discovers circular import there
