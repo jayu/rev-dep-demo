@@ -6,6 +6,8 @@
 npm install
 ```
 
+It's using rev-dep@2.4.0-beta.2
+
 ## TLDR
 - added support for resolving imports defined in imports map in package.json (default behaviour)
 - added support for resolving files imported from workspace packages (opt-in behaviour, use `--follow-monorepo-packages` flag)

@@ -7,7 +7,7 @@
     "circular": "rev-dep circular"
   },
   "devDependencies": {
-    "rev-dep": "2.4.0-beta.1"
+    "rev-dep": "2.4.0-beta.2"
   },
   "exports": {
     "./file-utils": {
