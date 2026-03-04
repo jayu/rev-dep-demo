@@ -1,24 +1,14 @@
 {
   "name": "rev-dep-demo",
   "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "private": true,
-  "packageManager": "npm@11.6.2",
-  "type": "module",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "circular": "rev-dep circular --follow-monorepo-packages",
-    "app-files-from-root": "rev-dep files --entry-point ./apps/app/src/index.ts --follow-monorepo-packages",
-    "app-files-from-root-by-cwd": "rev-dep files --cwd ./apps/app --entry-point ./src/index.ts --follow-monorepo-packages"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "devDependencies": {
-    "dependency-cruiser": "^17.3.6",
-    "rev-dep": "2.4.0-beta.2",
-    "turbo": "latest",
-    "typescript": "^5.9.3"
-  }
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.25.0"
 }

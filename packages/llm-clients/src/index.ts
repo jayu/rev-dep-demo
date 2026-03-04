@@ -1,0 +1,1 @@
+import '@ai-sdk/cerebras'
