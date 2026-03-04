@@ -1,9 +1,10 @@
 {
-  "configVersion": "1.6",
-  "$schema": "https://github.com/jayu/rev-dep/blob/master/config-schema/1.6.schema.json?raw=true",
+  "configVersion": "1.5",
+  "$schema": "https://github.com/jayu/rev-dep/blob/master/config-schema/1.5.schema.json?raw=true",
   "rules": [
     {
       "path": "packages/llm-clients",
+      "followMonorepoPackages": true,
       "missingNodeModulesDetection": {
         "enabled": true
       }
